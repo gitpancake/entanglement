@@ -8,6 +8,7 @@ class Tree {
   leaves = [];
   branches = [];
   root;
+  leafCount = 0;
 
   constructor(treeConfig, config) {
     for (var i = 0; i < treeConfig.leaves; i++) {

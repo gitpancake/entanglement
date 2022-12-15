@@ -34,13 +34,19 @@
 // https://youtu.be/4uU9lZ-HSqA
 // https://editor.p5js.org/codingtrain/sketches/qa7RiptE9
 const { Tree } = require("./shapes/Tree");
+const { getSpeed, getBranchLength } = require("./utils");
 const { generateConfig } = require("./utils/config");
 const { FXRandomBetween, FXRandomIntBetween } = require("./utils/fxrandHelper");
 
 var trees = [];
 
 window.setup = () => {
-  createCanvas(window.innerWidth, window.innerHeight);
+  const canvasDiv = document.getElementById("drawing-canvas");
+
+  const sketchCanvas = createCanvas(canvasDiv.offsetWidth, canvasDiv.offsetHeight);
+
+  sketchCanvas.parent("drawing-canvas");
+
   background("#071013");
 
   const config = generateConfig();
@@ -55,9 +61,9 @@ window.setup = () => {
     Rows: config.rows,
     Columns: config.cols,
     Plots: config.leaves,
-    FrameRate: config.frameRate,
-    ItsComingHome: config.itsComingHome,
-    BeThereOrBe: config.beThereOrBe,
+    Speed: getSpeed(config.frameRate),
+    Circles: config.itsComingHome,
+    Branches: getBranchLength(config.branchLength),
   };
 
   const step = 40;
@@ -100,5 +106,10 @@ window.draw = () => {
   for (var i = 0; i < trees.length; i++) {
     trees[i].show();
     trees[i].grow();
+  }
+
+  if (trees.every((tree) => tree.leaves.length < 20)) {
+    noLoop();
+    fxpreview();
   }
 };

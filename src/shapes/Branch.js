@@ -1,4 +1,4 @@
-const { FXRandomBetween } = require("../utils/fxrandHelper");
+const { FXRandomBetween, FXRandomIntBetween } = require("../utils/fxrandHelper");
 
 class Branch {
   pos;
@@ -6,7 +6,7 @@ class Branch {
   dir;
   reached = false;
   count = 0;
-  len = 5;
+  len;
   origDir;
   color;
   size;
@@ -14,7 +14,6 @@ class Branch {
   deviate;
   weightDeviation;
   itsComingHome;
-  beThereOrBe;
   config;
 
   constructor(parent, pos, dir, color, config) {
@@ -22,9 +21,9 @@ class Branch {
     this.parent = parent;
     this.dir = dir;
     this.origDir = dir.copy();
+    this.len = config.branchLength;
 
     this.itsComingHome = config.itsComingHome;
-    this.beThereOrBe = config.beThereOrBe;
     this.config = config;
 
     this.color = color;
@@ -50,27 +49,25 @@ class Branch {
 
     const rando = Math.floor(this.drawer);
 
-    if (rando < 5 && rando > 2 && this.itsComingHome) {
+    if (this.itsComingHome) {
       noFill();
-      ellipse(this.pos.x, this.pos.y, this.size, this.size);
+
+      strokeWeight(0.5);
+
       ellipse(this.pos.x, this.pos.y, this.size, this.size);
     }
 
-    if (this.beThereOrBe && rando > 5) {
-      noFill();
-      rect(this.pos.x, this.pos.y, this.size / 2, this.size / 2);
-    } else {
-      noFill();
-      strokeWeight(this.weightDeviation);
+    noFill();
 
-      line(this.pos.x, this.pos.y, this.parent.pos.x, this.parent.pos.y);
+    strokeWeight(0.75);
 
-      stroke("#fff");
+    line(this.pos.x, this.pos.y, this.parent.pos.x, this.parent.pos.y);
 
-      strokeWeight(0.25);
+    stroke("#fff");
 
-      line(this.pos.x - 1, this.pos.y + 1, this.parent.pos.x - 1, this.parent.pos.y + 0.5);
-    }
+    strokeWeight(0.25);
+
+    line(this.pos.x - 1, this.pos.y + 1, this.parent.pos.x - 1, this.parent.pos.y + 0.5);
   }
 
   reset() {
