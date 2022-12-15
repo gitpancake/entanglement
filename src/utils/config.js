@@ -1,4 +1,4 @@
-const { FXRandomIntBetween, FXRandomOption } = require("./fxrandHelper");
+const { FXRandomIntBetween, FXRandomBool } = require("./fxrandHelper");
 
 const palettes = [
   {
@@ -33,12 +33,39 @@ const palettes = [
 
 export const generateConfig = () => {
   const randomPaletteIndex = FXRandomIntBetween(0, palettes.length);
-  const rows = FXRandomIntBetween(1, 5);
-  const cols = FXRandomIntBetween(1, 2);
+  const itsComingHome = FXRandomBool();
+  const beThereOrBe = FXRandomBool();
 
-  return {
-    palette: palettes[randomPaletteIndex],
+  let rows, cols, leaves;
+
+  if (itsComingHome) {
+    cols = FXRandomIntBetween(1, 5);
+    rows = 1;
+  } else if (itsComingHome && beThereOrBe) {
+    cols = 5;
+    rows = 1;
+  } else {
+    rows = FXRandomIntBetween(1, 5);
+    cols = FXRandomIntBetween(1, 3);
+  }
+
+  if (rows >= 2 || cols >= 2) {
+    leaves = FXRandomIntBetween(250, 255);
+  } else {
+    leaves = FXRandomIntBetween(255, 500);
+  }
+
+  const config = {
     rows,
     cols,
+    frameRate: FXRandomIntBetween(40, 60),
+    palette: palettes[randomPaletteIndex],
+    leaves,
+    itsComingHome,
+    beThereOrBe,
   };
+
+  console.table(config);
+
+  return config;
 };

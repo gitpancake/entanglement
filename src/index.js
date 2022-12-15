@@ -40,15 +40,25 @@ const { FXRandomBetween, FXRandomIntBetween } = require("./utils/fxrandHelper");
 var trees = [];
 
 window.setup = () => {
-  createCanvas(800, 800);
+  createCanvas(window.innerWidth, window.innerHeight);
   background("#071013");
 
   const config = generateConfig();
 
-  frameRate(FXRandomBetween(20, 40));
+  frameRate(config.frameRate);
 
   const cols = config.cols;
   const rows = config.rows;
+
+  window.$fxhashFeatures = {
+    Palette: config.palette.name,
+    Rows: config.rows,
+    Columns: config.cols,
+    Plots: config.leaves,
+    FrameRate: config.frameRate,
+    ItsComingHome: config.itsComingHome,
+    BeThereOrBe: config.beThereOrBe,
+  };
 
   const step = 40;
 
@@ -76,10 +86,10 @@ window.setup = () => {
         leafAreaYStart,
         leafAreaYEnd,
         color: config.palette.options[FXRandomIntBetween(0, config.palette.options.length)],
-        leaves: FXRandomBetween(499, 500),
+        leaves: config.leaves,
       };
 
-      trees.push(new Tree(treeConfig));
+      trees.push(new Tree(treeConfig, config));
     }
   }
 };

@@ -9,15 +9,15 @@ class Tree {
   branches = [];
   root;
 
-  constructor(config) {
-    for (var i = 0; i < config.leaves; i++) {
-      this.leaves.push(new Leaf(config));
+  constructor(treeConfig, config) {
+    for (var i = 0; i < treeConfig.leaves; i++) {
+      this.leaves.push(new Leaf(treeConfig));
     }
 
-    var rootPosition = createVector(config.rootX, config.rootY);
+    var rootPosition = createVector(treeConfig.rootX, treeConfig.rootY);
     var rootDir = createVector(0, -1);
 
-    this.root = new Branch(null, rootPosition, rootDir, config.color);
+    this.root = new Branch(null, rootPosition, rootDir, treeConfig.color, config);
     this.branches.push(this.root);
 
     var current = this.root;
