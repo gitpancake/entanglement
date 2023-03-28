@@ -33,12 +33,14 @@
 // https://thecodingtrain.com/CodingInTheCabana/002-collatz-conjecture.html
 // https://youtu.be/4uU9lZ-HSqA
 // https://editor.p5js.org/codingtrain/sketches/qa7RiptE9
-const { Tree } = require("./shapes/Tree");
-const { getSpeed, getBranchLength } = require("./utils");
+const { Particle } = require("./shapes/Particle");
 const { generateConfig } = require("./utils/config");
-const { FXRandomBetween, FXRandomIntBetween } = require("./utils/fxrandHelper");
+const { FXRandomBetween } = require("./utils/fxrandHelper");
 
-var trees = [];
+var num = 4500;
+var finishIn = 0;
+var ticks = 0;
+var particles = [num];
 
 window.setup = () => {
   const canvasDiv = document.getElementById("drawing-canvas");
@@ -47,69 +49,44 @@ window.setup = () => {
 
   sketchCanvas.parent("drawing-canvas");
 
-  background("#071013");
+  const config = generateConfig(sketchCanvas);
 
-  const config = generateConfig();
+  noiseSeed(50);
+  randomSeed(50);
 
-  frameRate(config.frameRate);
+  frameRate(200);
 
-  const cols = config.cols;
-  const rows = config.rows;
+  // colorMode(HSB, 100);
 
-  window.$fxhashFeatures = {
-    Palette: config.palette.name,
-    Rows: config.rows,
-    Columns: config.cols,
-    Plots: config.leaves,
-    Speed: getSpeed(config.frameRate),
-    Circles: config.itsComingHome,
-    Branches: getBranchLength(config.branchLength),
-  };
+  for (let i = 0; i < num; i++) {
+    //x value start slightly outside the right of canvas, z value how close to viewer
+    const viewDistance = config.viewDistance;
 
-  const step = 40;
+    var loc = createVector(FXRandomBetween(config.borderWidth, sketchCanvas.width - config.borderWidth), FXRandomBetween(config.borderWidth, sketchCanvas.height - config.borderWidth), viewDistance);
 
-  const yMargin = (height - step * rows) / 2;
-  const xMargin = (width - step * cols) / 2;
+    var angle = cos(360);
 
-  for (var r = 0; r < rows; r++) {
-    for (var c = 0; c < cols; c++) {
-      const deviationX = c === 0 || c === cols ? xMargin : FXRandomBetween((c + 1) * step + xMargin, (c + 1) * step - step + xMargin);
+    var dir = createVector(angle, angle);
 
-      const rootX = deviationX;
-      const rootY = height - ((r + 1) * step - step / 2) - (step / 2 + yMargin);
+    let speed = config.speed;
 
-      const leafAreaXStart = 0 + step;
-      const leafAreaXEnd = width - step;
-
-      const leafAreaYStart = 0 + step;
-      const leafAreaYEnd = height - step;
-
-      const treeConfig = {
-        rootX,
-        rootY,
-        leafAreaXStart,
-        leafAreaXEnd,
-        leafAreaYStart,
-        leafAreaYEnd,
-        color: config.palette.options[FXRandomIntBetween(0, config.palette.options.length)],
-        leaves: config.leaves,
-      };
-
-      trees.push(new Tree(treeConfig, config));
-    }
+    particles[i] = new Particle(loc, dir, speed, config, sketchCanvas);
   }
+
+  finishIn = config.finishIn;
 };
 
 window.draw = () => {
-  background("#071013");
+  fill(0, 5, 0, 5);
+  rect(0, 0, width, height);
 
-  for (var i = 0; i < trees.length; i++) {
-    trees[i].show();
-    trees[i].grow();
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].run();
   }
 
-  if (trees.every((tree) => tree.leaves.length < 20)) {
+  ticks++;
+
+  if (ticks >= finishIn) {
     noLoop();
-    fxpreview();
   }
 };
